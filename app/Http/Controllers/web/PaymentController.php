@@ -22,7 +22,6 @@ class PaymentController extends Controller
     }
     public function store(Request $request)
     {
-        $check_date = 0 ; 
         if($request->type_payment == 'cash'){
             $request->validate([
                 'subscription_id'=>"required",
@@ -34,7 +33,6 @@ class PaymentController extends Controller
                 'card_CVV'=>"nullable|string|min:3|max:3",
                 
             ]);
-            $check_date = 1 ;
         }else{
             $request->validate([
                 'subscription_id'=>"required",
@@ -48,18 +46,10 @@ class PaymentController extends Controller
             ]);
             
         }
-        if($check_date){
-        $card_end_date = $request->card_end_date;
-        }else{
-        $card_end_date =$request->card_end_date.'-01';
-        }
+
 
         $Payment = Payment::create([
             'type_payment'=>$request->type_payment,
-            'cash_number'=>$request->cash_number,
-            'card_number'=>$request->card_number,
-            'card_end_date'=>$card_end_date,
-            'card_CVV'=>$request->card_CVV,
         ]);
 
         $subscription = Subscription::findOrFail($request->subscription_id);

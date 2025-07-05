@@ -2,15 +2,14 @@
 
 namespace App\Listeners;
 
-use App\Events\RenewSubscriptionEvent;
-use App\Mail\RenewSubscriptionMail;
+use App\Events\UnAcceptedOrderEvent;
+use App\Mail\UnAcceptedOrderMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
-class SendRenewSubscriptionMailListener
+class SendUnAcceptedOrderMailListener
 {
-    
     /**
      * Create the event listener.
      *
@@ -24,11 +23,11 @@ class SendRenewSubscriptionMailListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\RenewSubscriptionEvent  $event
+     * @param  \App\Events\UnAcceptedOrderEvent  $event
      * @return void
      */
-    public function handle(RenewSubscriptionEvent $event)
+    public function handle(UnAcceptedOrderEvent $event)
     {
-        Mail::to($event->userSubsRenewId->user->email)->send(new RenewSubscriptionMail($event->userSubsRenewId));
+        Mail::to($event->user_email)->send(new UnAcceptedOrderMail($event->order));
     }
 }

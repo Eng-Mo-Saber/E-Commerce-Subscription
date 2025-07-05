@@ -35,10 +35,6 @@ class HomeController extends Controller
                         $oldPayment = Payment::find($paymentId);
                         $newPayment = Payment::create([
                             'type_payment' => $oldPayment['type_payment'],
-                            'card_number' => $oldPayment['card_number'],
-                            'card_end_date' => $oldPayment['card_end_date'],
-                            'card_CVV' => $oldPayment['card_CVV'],
-                            'cash_number' => $oldPayment['cash_number'],
                         ]);
                         $userSubsRenew = UserSubscription::create([
                             'user_id' => $user->id,

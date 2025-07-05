@@ -20,9 +20,6 @@ class Payment extends Model
 
     protected $fillable = [
         'type_payment',
-        'cash_number',
-        'card_number',
-        'card_end_date',
-        'card_CVV',
+
     ];
 }

@@ -5,12 +5,14 @@ namespace App\Providers;
 use App\Events\AcceptedOrderEvent;
 use App\Events\AddOrderEvent;
 use App\Events\RenewSubscriptionEvent;
+use App\Events\UnAcceptedOrderEvent;
 use App\Events\UserRegisterEvent;
 use App\Events\UserSubscriptionEvent;
 use App\Listeners\SendAcceptedOrderMailListener;
 use App\Listeners\SendAddOrderMailListener;
 use App\Listeners\SendRenewSubscriptionMailListener;
 use App\Listeners\SendSubscriptionMailListener;
+use App\Listeners\SendUnAcceptedOrderMailListener;
 use App\Listeners\SendWelcomeMailListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -39,6 +41,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         AcceptedOrderEvent::class => [
             SendAcceptedOrderMailListener::class,
+        ],
+        UnAcceptedOrderEvent::class => [
+            SendUnAcceptedOrderMailListener::class,
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,

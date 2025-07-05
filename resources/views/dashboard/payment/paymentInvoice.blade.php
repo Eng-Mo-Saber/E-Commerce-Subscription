@@ -19,11 +19,6 @@
         </div>
 
         <div class="row mb-3">
-            @if ($payment->type_payment == 'credit')
-            <div class="col-md-6"><strong>Payment Credit Number:</strong> {{ $payment->card_number }}</div>
-            @else
-            <div class="col-md-6"><strong>Payment Cash Number:</strong> {{ $payment->cash_number }}</div>
-            @endif
             @if ($userSubscription->auto_renew == 1)
             <div class="col-md-6"><strong>Auto Renew:</strong> Yes </div>
             @else

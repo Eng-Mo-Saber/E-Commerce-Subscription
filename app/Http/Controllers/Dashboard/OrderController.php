@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Events\AcceptedOrderEvent;
+use App\Events\UnAcceptedOrderEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Order_item;
@@ -30,6 +31,7 @@ class OrderController extends Controller
         $order = Order::find($id);
         $order->status ='rejected';
         $order->save();
+        event(new UnAcceptedOrderEvent($order));
 
         return redirect()->route('dashboard.showOrders')->with('success' , "Order The UnAccepted");
     }

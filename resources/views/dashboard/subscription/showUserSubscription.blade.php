@@ -56,15 +56,9 @@
                                 <div class="d-flex flex-row gap-3">
                                     @foreach ($payments as $payment)
                                         @if ($payment->id == $userSubscription->payment_id)
-                                            @if ($payment->type_payment == 'credit')
-                                                <div>{{ $payment->card_number }} | </div>
-                                                <div>{{ $payment->card_end_date }} |</div>
-                                                <div>{{ $payment->card_CVV }}</div>
-                                            @endif
 
-                                            @if ($payment->type_payment == 'cash')
-                                                <div>{{ $payment->cash_number }}</div>
-                                            @endif
+
+                                                <div>{{ $payment->type_payment }}</div>
                                         @endif
                                     @endforeach
 

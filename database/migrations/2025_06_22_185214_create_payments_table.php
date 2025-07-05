@@ -16,10 +16,6 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('type_payment');
-            $table->string('card_number')->nullable();
-            $table->date('card_end_date')->date_format('Y-m')->nullable();
-            $table->string('card_CVV')->nullable();
-            $table->string('cash_number')->nullable();
             $table->timestamps();
         });
     }
