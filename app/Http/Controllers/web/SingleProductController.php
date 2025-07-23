@@ -19,7 +19,6 @@ class SingleProductController extends Controller
     public function index($id)
     {
         $product = Product::find($id);
-        $categories = Category::all();
 
 
 
@@ -156,7 +155,6 @@ class SingleProductController extends Controller
         return view(
             'single-product',
             compact(
-                'categories',
                 'product',
                 'typeSubDownload',
                 'typeSubAudio',

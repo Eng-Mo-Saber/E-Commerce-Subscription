@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\RenewSubscriptionEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Payment;
@@ -15,9 +14,8 @@ class LoginController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
 
-        return view('auth.login', compact('categories'));
+        return view('auth.login');
     }
     public function login(Request $request)
     {

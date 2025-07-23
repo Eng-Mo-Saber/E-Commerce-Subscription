@@ -10,7 +10,6 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('auth.profile', compact('categories'));
+        return view('auth.profile');
     }
 }

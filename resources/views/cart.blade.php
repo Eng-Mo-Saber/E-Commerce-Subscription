@@ -38,10 +38,17 @@
                                 <td>{{ $cart->product->price }} جنيه</td>
                                 <td>{{ $cart->quantity * $cart->product->price }} جنيه</td>
                                 <td class="d-block d-md-table-cell text-center">
-                                    <a href="{{ route('cart.destroy', $cart->id) }}" class="text-danger fs-5"
-                                        title="إزالة من السلة">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </a>
+                                    <form action="{{ route('cart.destroy', $cart->id) }}" method="POST"
+                                        style="display: inline;"
+                                        onsubmit="return confirm('هل أنت متأكد من إزالة هذا العنصر من السلة🧺؟');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-link text-danger fs-5 p-0 m-0"
+                                            title="إزالة من السلة" style="background: none; border: none;">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </form>
+
                                 </td>
                             </tr>
                         @endforeach

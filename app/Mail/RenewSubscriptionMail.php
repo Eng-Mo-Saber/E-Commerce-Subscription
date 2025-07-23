@@ -19,9 +19,9 @@ class RenewSubscriptionMail extends Mailable
      *
      * @return void
      */
-    public function __construct($userSubsRenewId)
+    public function __construct($userSubsRenew)
     {
-        $this->userSubsRenew = UserSubscription::findOrFail($userSubsRenewId);
+        $this->userSubsRenew = $userSubsRenew;
 
     }
 

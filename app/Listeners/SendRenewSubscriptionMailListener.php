@@ -29,6 +29,6 @@ class SendRenewSubscriptionMailListener
      */
     public function handle(RenewSubscriptionEvent $event)
     {
-        Mail::to($event->userSubsRenewId->user->email)->send(new RenewSubscriptionMail($event->userSubsRenewId));
+        Mail::to($event->userSubsRenew->user->email)->send(new RenewSubscriptionMail($event->userSubsRenew));
     }
 }

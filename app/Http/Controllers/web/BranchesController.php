@@ -10,7 +10,6 @@ class BranchesController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('branches' , compact('categories'));
+        return view('branches');
     }
 }

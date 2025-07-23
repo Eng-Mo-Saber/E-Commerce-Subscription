@@ -12,9 +12,8 @@ class FavoritesController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
         $favorites = auth()->user()->favorites;
-        return view('favorites' , compact('categories' , 'favorites'));
+        return view('favorites' , compact( 'favorites'));
     }
     public function add_favorite($id){
         Favorite::create([

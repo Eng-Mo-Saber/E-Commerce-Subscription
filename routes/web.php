@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Dashboard\AddCategoryController;
 use App\Http\Controllers\Dashboard\AddProductController;
 use App\Http\Controllers\Dashboard\AddServiceController;
@@ -27,11 +28,11 @@ use App\Http\Controllers\web\CheckoutController;
 use App\Http\Controllers\web\ContactController;
 use App\Http\Controllers\web\FavoritesController;
 use App\Http\Controllers\web\HomeController;
+
 use App\Http\Controllers\web\MySubscriptionController;
-
 use App\Http\Controllers\web\PaymentController;
-use App\Http\Controllers\web\PrivacyPolicyController;
 
+use App\Http\Controllers\web\PrivacyPolicyController;
 use App\Http\Controllers\web\ReadController;
 use App\Http\Controllers\web\ServiceController;
 use App\Http\Controllers\web\ShopController;
@@ -53,6 +54,7 @@ use PhpParser\Node\Stmt\For_;
 
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -64,13 +66,20 @@ use PhpParser\Node\Stmt\For_;
 |
 */
 
-Route::get('/test', [HomeController::class, 'test']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home.page');
 Route::get('/login', [loginController::class, 'index'])->name('login.page');
 Route::get('/register', [registerController::class, 'index'])->name('register.page');
+//[  (دول خاصين باعاده تعيين كلمه السر)
+//عرض صفحه اللي بيبعت منها الايميل
 Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('forgot-password.page');
-Route::get('/single-category/{id}', [SingleCategoryController::class, 'index'])->name('single-category.page');
+//بيشوف هل الايميل موجود ولا لا 
+Route::post('/check-email-password', [ForgotPasswordController::class, 'check_email'])->name('check-email.forgot-password');
+//بيشوف لو التوكين صح بيوديه علي صفحه اعادة التعيين
+Route::get('/reset-password/{token}/{email}', [ResetPasswordController::class, 'index'])->name('reset-password.page');
+//هيعمل اعادة تعيين لكلمة السر
+Route::post('/reset', [ResetPasswordController::class, 'reset_password'])->name('reset.request');
+// ]
 Route::get('/single-category/{id}', [SingleCategoryController::class, 'index'])->name('single-category.page');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.page');
 Route::get('/branches', [BranchesController::class, 'index'])->name('branches.page');
@@ -84,12 +93,16 @@ Route::post('/login-user', [LoginController::class, 'login'])->name('login.user'
 
 // Route::get('/refund-policy', [PagesController::class, 'refund_policy'])->name('refund-policy.page');
 
+Route::get('/payment/handle', [PaymentController::class, 'handlePayment'])->name('payment.handle');
+
 
 
 Route::middleware('auth')->group(function () {
         
     
     Route::get('/account-details', [AccountDetailsController::class, 'index'])->name('account-details.page');
+    Route::post('/edit-account-details', [AccountDetailsController::class, 'edit'])->name('account-details.edit');
+    Route::post('/update-password-account', [AccountDetailsController::class, 'update'])->name('account-details.update');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.page');
     //service
     route::get('/service', [ServiceController::class, 'index'])->name('service.page');
@@ -97,8 +110,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/subscription/{id}', [SubscriptionController::class, 'index'])->name('subscription.page');
     //my-subscription
     Route::get('/my-subscription', [MySubscriptionController::class, 'index'])->name('my-subscription.page');
+    Route::delete('/cancel-my-subscription/{id}', [MySubscriptionController::class, 'destroy'])->name('my-subscription.destroy');
     //payment
     Route::get('/payment/{id}', [PaymentController::class, 'index'])->name('payment.page');
+    Route::post('/payment-kashier', [PaymentController::class, 'redirectToKashier'])->name('payment.kashier');
+
     Route::post('/add-payment', [PaymentController::class, 'store'])->name('payment.store');
     Route::get('/payment-invoice/{id}', [PaymentController::class, 'show'])->name('payment-invoice.page');
     //single product
@@ -106,11 +122,11 @@ Route::middleware('auth')->group(function () {
     //favorites
     Route::get('/favorites', [FavoritesController::class, 'index'])->name('favorites.page');
     Route::get('/Add-favorite/{id}', [FavoritesController::class, 'Add_favorite'])->name('Add-favorites.page');
-    Route::get('/Remove-favorite/{id}', [FavoritesController::class, 'destroy'])->name('Remove-favorites.page');
+    Route::delete('/Remove-favorite/{id}', [FavoritesController::class, 'destroy'])->name('Remove-favorites.page');
     //cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.page');
     Route::post('/cart/{id}', [CartController::class, 'store'])->name('cart.store');
-    Route::get('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
     //checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.page');
     //logout

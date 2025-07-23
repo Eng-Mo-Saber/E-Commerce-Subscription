@@ -19,7 +19,15 @@ class Payment extends Model
     }
 
     protected $fillable = [
-        'type_payment',
-
+        'user_id',
+        'subscription_id',
+        'order_id',
+        'amount',
+        'currency',
+        'status',
+        'payment_method',
+        'payment_date',
+        'next_renewal_date',
+        'kashier_response',
     ];
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login')
+@section('title', 'Reset Password')
 
 @section('content')
 
@@ -13,7 +13,7 @@
                 </div>
                 <div class="page-top__breadcrumb">
                     <a class="text-gray" href="{{ route('home.page') }}">الرئيسية</a> /
-                    <span class="text-gray">تسجيل الدخول</span>
+                    <span class="text-gray">إعادة تعيين كلمة السر</span>
                 </div>
             </div>
         </div>
@@ -25,24 +25,9 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-                <form action="{{ route('login.user') }}" method="POST" class="mb-5">
+                <form action="{{ route('reset.request') }}" method="POST" class="mb-5">
                     @csrf
-                    @error('email')
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                <li>{{ $message }}</li>
-                            </ul>
-                        </div>
-                    @enderror
-                    <div class="input-group rounded-1 mb-3">
-                        <input type="text" name="email" class="form-control p-3" placeholder="البريد الالكتروني" />
-                        <span class="input-group-text login__input-icon"><i class="fa-solid fa-envelope"></i></span>
-                    </div>
+                    <input type="hidden" name="email" value="{{ $email }}" />
                     @error('password')
                         <div class="alert alert-danger">
                             <ul class="mb-0">
@@ -54,16 +39,20 @@
                         <input type="password" name="password" class="form-control p-3" placeholder="كلمة السر" />
                         <span class="input-group-text login__input-icon"><i class="fa-solid fa-key"></i></span>
                     </div>
-
-                    <div class="d-flex justify-content-end mb-3">
-                        <a href="{{ route('forgot-password.page') }}"
-                            class="btn btn-link text-decoration-none text-primary p-0">
-                            نسيت كلمة المرور؟
-                        </a>
+                    @error('confirm_password')
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                <li>{{ $message }}</li>
+                            </ul>
+                        </div>
+                    @enderror
+                    <div class="input-group rounded-1 mb-3">
+                        <input type="password" name="confirm_password" class="form-control p-3" placeholder="تأكيد كلمة السر " />
+                        <span class="input-group-text login__input-icon"><i class="fa-solid fa-key"></i></span>
                     </div>
 
                     <button class="text-center fs-6 py-2 w-100 bg-black text-white border-0 rounded-1">
-                        تسجيل الدخول
+                        إعادة تعيين كلمة السر 
                     </button>
                 </form>
             </div>

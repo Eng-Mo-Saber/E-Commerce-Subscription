@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ResetPassword;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -9,19 +10,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EndSubscriptionMail extends Mailable
+class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user_subscription ;
+    public $token ;
+    public $email ;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user_subscription)
+    public function __construct($token , $email)
     {
-        $this->user_subscription = $user_subscription ;
+        $this->token = $token ;
+        $this->email = $email ;
     }
 
     /**
@@ -32,7 +36,7 @@ class EndSubscriptionMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'End Subscription Mail',
+            subject: 'Reset Password Mail',
         );
     }
 
@@ -44,7 +48,7 @@ class EndSubscriptionMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mails.end_subscription_mail',
+            view: 'mails.reset-password-mail',
         );
     }
 

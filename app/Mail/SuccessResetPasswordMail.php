@@ -9,19 +9,18 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EndSubscriptionMail extends Mailable
+class SuccessResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $user_subscription ;
+    public $user ;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user_subscription)
+    public function __construct($user)
     {
-        $this->user_subscription = $user_subscription ;
+        $this->user = $user ;
     }
 
     /**
@@ -32,7 +31,7 @@ class EndSubscriptionMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'End Subscription Mail',
+            subject: 'Success Reset Password Mail',
         );
     }
 
@@ -44,7 +43,7 @@ class EndSubscriptionMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mails.end_subscription_mail',
+            view: 'mails.success-reset-password-mail',
         );
     }
 

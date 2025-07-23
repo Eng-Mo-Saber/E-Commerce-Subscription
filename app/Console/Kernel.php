@@ -3,6 +3,10 @@
 namespace App\Console;
 
 use App\Events\RenewSubscriptionEvent;
+use App\Jobs\SendMailBeforeEndSubscriptionJop;
+use App\Jobs\SendMailComplatedOrderJop;
+use App\Jobs\SendMailEndSubscriptionJop;
+use App\Jobs\SendMailRenewSubscriptionJop;
 use App\Mail\BeforeEndSubscriptionMail;
 use App\Mail\CompletedOrderMail;
 use App\Mail\EndSubscriptionMail;
@@ -27,83 +31,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-
+        
         //ارسال ايميل قبل انتهاء المده بيومين
-        $schedule->call(function () {
-            $targetDate = now()->addDays(3)->toDateString();
-            $user_subscriptions = UserSubscription::whereDate('end_date', $targetDate)->get();
-            foreach ($user_subscriptions as $user_subscription) {
-                $user = $user_subscription->user;
-                if ($user && $user->email) {
-                    Mail::to($user->email)->queue(new BeforeEndSubscriptionMail($user_subscription));
-                }
-            }
-        })->twiceDaily(0, 12);
-
+        $schedule->job(new SendMailBeforeEndSubscriptionJop())->daily();
+        
         //ارسال ايميل في يوم الانتهاء
-        $schedule->call(function () {
-            $user_subscriptions = UserSubscription::whereDate('end_date', now()->toDateString())->get();
-            foreach ($user_subscriptions as $user_subscription) {
-                $user = $user_subscription->user;
-                if ($user && $user->email) {
-                    Mail::to($user->email)->queue(new EndSubscriptionMail($user_subscription));
-                }
-            }
-        })->daily();
+        $schedule->job(new SendMailEndSubscriptionJop())->daily();
+        
+        //اختبار الاشتراك 
+        $schedule->job(new SendMailRenewSubscriptionJop())->everySixHours();
         
         //تغيير حاله الطلب الي complated بعد يومين من الموافق عليه من الادمين
-        $schedule->call(function () {
-            $orders = Order::where('status' , 'shipped')->get();
-            foreach($orders as $order){
-                $targetDate = $order->updated_at->addDays(2)->toDateString();
-                if(now()->toDateString() == $targetDate){
-                    $order->status = 'completed';
-                    $order->save();
-                    //mail
-                    Mail::to($order->user->email)->queue(new CompletedOrderMail($order));
-                }
-            }
-        })->everyTwoHours();
+        $schedule->job(new SendMailComplatedOrderJop())->everySixHours();
 
-        // //اختبار الاشتراك 
-        // $schedule->call(function () {
-        //     //كل الاشتراكات اللي معادها انتهي
-        //     // كل الاشتراكات اللي المستخدم مشترك فيها مع الاشتراك المرتبط
-        //     $userSubscriptions = UserSubscription::all();
-
-        //     // بيشوف هل مفعل تجديد تلقائي ولالا لو مفعل بيجدده لو مش مفعل بيوقفه لو انتهي
-        //     foreach ($userSubscriptions as $userSubscription) {
-        //         //بيشوف تاريخ النهارده هو تاريخ الانتهاء او بعد تاريخ الانتهاء 
-        //         $isExpired = Carbon::now()->gt($userSubscription->end_date);
-        //         if ($isExpired) {
-        //             if ($userSubscription->auto_renew == 1) {
-        //                 $paymentId = $userSubscription->payment_id;
-        //                 $oldPayment = Payment::find($paymentId);
-        //                 $newPayment = Payment::create([
-        //                     'type_payment' => $oldPayment->type_payment,
-        //                 ]);
-        //                 $userSubsRenew = UserSubscription::create([
-        //                     'user_id' => $userSubscription->id,
-        //                     'subscription_id' => $userSubscription->subscription_id,
-        //                     'status' => 'active',
-        //                     'end_date' => now()->addDays($userSubscription->subscription->duration_in_days),
-        //                     'auto_renew' => 1,
-        //                     'payment_id' => $newPayment->id,
-        //                 ]);
-        //                 $userSubsRenewId = $userSubsRenew->id;
-        //                 dd(123);
-        //                 event(new RenewSubscriptionEvent($userSubsRenewId));
-        //                 $userSubscription->status = 'not_active';
-        //                 $userSubscription->auto_renew = 0;
-        //                 $userSubscription->save();
-        //             } else {
-        //                 $userSubscription->status = 'not_active';
-        //                 $userSubscription->save();
-        //             }
-        //         }
-        //     }
-        // })->everyMinute();
+        //command run the queue
+        $schedule->command('queue:run')->everyMinute();
     }
 
     /**

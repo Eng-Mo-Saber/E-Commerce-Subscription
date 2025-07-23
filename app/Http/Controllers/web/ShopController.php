@@ -10,7 +10,6 @@ class ShopController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('shop' , compact('categories'));
+        return view('shop');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\UserSubscription;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -13,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class RenewSubscriptionEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $userSubsRenewId ;
+    public $userSubsRenew ;
     /**
      * Create a new event instance.
      *
@@ -21,7 +22,7 @@ class RenewSubscriptionEvent
      */
     public function __construct($userSubsRenewId)
     {
-        $this->userSubsRenewId = $userSubsRenewId ;
+        $this->userSubsRenew = UserSubscription::find($userSubsRenewId) ;
     }
 
     /**

@@ -20,9 +20,9 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+
         $orders = Order::where('user_id' , auth()->user()->id)->get();
-        return view('order.orders', compact('categories' , 'orders'));
+        return view('order.orders', compact( 'orders'));
     }
 
     /**

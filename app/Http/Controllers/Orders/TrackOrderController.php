@@ -16,8 +16,8 @@ class TrackOrderController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
-        return view('order.track-order' ,  compact('categories'));
+
+        return view('order.track-order' );
     }
 
     public function show_status_order(Request $request)

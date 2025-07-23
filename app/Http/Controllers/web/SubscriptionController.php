@@ -12,9 +12,8 @@ class SubscriptionController extends Controller
 {
     public function index($id)
     {
-        $categories = Category::all();
         $service = Service::find($id);
-        return view('subscription.subscriptions' , compact( 'categories' , 'service'));
+        return view('subscription.subscriptions' , compact(  'service'));
     }
     
 

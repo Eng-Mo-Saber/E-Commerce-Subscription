@@ -28,8 +28,8 @@
             <section class="section-container favourites">
                 <table class="w-100">
                     <thead>
-                        <th class="d-none d-md-table-cell"></th>
-                        <th class="d-none d-md-table-cell"></th>
+                        <th class="d-none d-md-table-cell">حذف</th>
+                        <th class="d-none d-md-table-cell">الصورة</th>
                         <th class="d-none d-md-table-cell">الاسم</th>
                         <th class="d-none d-md-table-cell">السعر</th>
                         <th class="d-none d-md-table-cell">تاريخ الاضافه</th>
@@ -39,14 +39,18 @@
                     @foreach ($favorites as $favorite)
                         <tbody class="text-center">
                             <tr>
-
                                 <td class="d-block d-md-table-cell text-center">
-                                    <a href="{{ route('Remove-favorites.page', $favorite->id) }}" class="text-danger fs-5"
-                                        title="إزالة من المفضلة">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </a>
+                                    <form action="{{ route('Remove-favorites.page', $favorite->id) }}" method="POST"
+                                        onsubmit="return confirm('هل تريد الحذف من المفضلات❤😃؟');"
+                                        style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-link text-danger fs-5"
+                                            title="إزالة من المفضلة" style="border: none; padding: 0; background: none;">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </form>
                                 </td>
-
                                 <td class="d-block d-md-table-cell favourites__img">
                                     <img src="{{ asset('storage/' . $favorite->product->image) }}" alt="" />
                                 </td>

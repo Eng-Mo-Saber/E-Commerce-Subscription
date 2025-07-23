@@ -53,6 +53,9 @@
                     </div>
                     <ul class="nav__list list-unstyled">
                         <li class="nav__link nav__side-link"><a href="{{ route('home.page') }}" class="py-3">جميع المنتجات</a></li>
+                        @php
+                            $categories = App\Models\Category::all();
+                        @endphp
                         @foreach ($categories as $category )
                         <li class="nav__link nav__side-link"><a href="{{ route('single-category.page' , $category->id) }}" class="py-3">{{ $category->name }}</a></li>
                         @endforeach

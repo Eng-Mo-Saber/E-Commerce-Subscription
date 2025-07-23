@@ -10,7 +10,6 @@ class PrivacyPolicyController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('privacy-policy' , compact('categories'));
+        return view('privacy-policy');
     }
 }

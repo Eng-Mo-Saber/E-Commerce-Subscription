@@ -28,7 +28,7 @@
                             </ul>
                         </div>
                     @endif
-                    <form action="{{ route('payment.store') }}" method="POST">
+                    <form action="{{ route('payment.kashier') }}" method="POST">
                         @csrf
                         <input type="hidden" name="subscription_id" value="{{ $subscription->id }}">
 
@@ -40,41 +40,6 @@
                                 <option value="0">لا</option>
                             </select>
                         </div>
-
-                        {{-- طريقة الدفع --}}
-                        <div class="mb-3">
-                            <label class="form-label">طريقة الدفع</label>
-                            <select class="form-select" name="type_payment" id="paymentMethod" required
-                                onchange="togglePaymentFields(this.value)">
-                                <option value="">اختر طريقة الدفع</option>
-                                <option value="cash">Cash</option>
-                                <option value="credit">Credit Card </option>
-                            </select>
-                        </div>
-
-                        {{-- كاش --}}
-                        <div class="mb-3 d-none" id="cashField">
-                            <label class="form-label">Cash Number</label>
-                            <input type="text" name="cash_number" class="form-control" placeholder="مثلاً: 010xxxxxxx">
-                        </div>
-
-                        {{-- كريديت كارد --}}
-                        <div id="creditFields" class="d-none">
-                            <div class="mb-3">
-                                <label class="form-label">Card Number</label>
-                                <input type="text" name="card_number" class="form-control"
-                                    placeholder="1234 5678 9012 3456">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">تاريخ الانتهاء</label>
-                                <input type="month" name="card_end_date" class="form-control" placeholder="MM/YY">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">رمز الأمان (CVV)</label>
-                                <input type="text" name="card_CVV" class="form-control" placeholder="مثلاً: 123">
-                            </div>
-                        </div>
-
                         <button type="submit" class="btn btn-success w-100">اشترك الآن</button>
                     </form>
                 </div>
@@ -82,17 +47,4 @@
         </div>
     </div>
 
-    {{--  سكريبت لتبديل الحقول --}}
-    <script>
-        function togglePaymentFields(method) {
-            document.getElementById('cashField').classList.add('d-none');
-            document.getElementById('creditFields').classList.add('d-none');
-
-            if (method === 'cash') {
-                document.getElementById('cashField').classList.remove('d-none');
-            } else if (method === 'credit') {
-                document.getElementById('creditFields').classList.remove('d-none');
-            }
-        }
-    </script>
 @endsection

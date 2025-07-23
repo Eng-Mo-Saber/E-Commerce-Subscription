@@ -17,8 +17,7 @@ class RegisterController extends Controller
 
     public function index()
     {
-        $categories = Category::all();
-        return view('auth.register' , compact('categories'));
+        return view('auth.register' );
     }
 
     public function store(Request $request)

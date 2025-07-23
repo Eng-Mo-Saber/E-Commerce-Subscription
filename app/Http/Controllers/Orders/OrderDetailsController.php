@@ -17,10 +17,9 @@ class OrderDetailsController extends Controller
      */
     public function index($id)
     {
-        $categories = Category::all();
         $order = Order::find($id);
         $order_items = Order_item::where('order_id' , $id)->get();
-        return view('order.order-details'  , compact('categories' , 'order' , 'order_items'));
+        return view('order.order-details'  , compact( 'order' , 'order_items'));
     }
 
     /**

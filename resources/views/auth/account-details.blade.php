@@ -23,7 +23,7 @@
                     <div class="profile__user-img rounded-circle overflow-hidden">
                         <img class="w-100" src="assets/images/user.png" alt="" />
                     </div>
-                    <div class="profile__user-name">moamenyt</div>
+                    <div class="profile__user-name">{{ Auth::user()->name }}</div>
                 </div>
                 <ul class="profile__tabs list-unstyled ps-3">
                     <li class="profile__tab active">
@@ -53,7 +53,33 @@
             </div>
             <div class="profile__left mt-4 mt-md-0 w-100">
                 <div class="profile__tab-content active">
-                    <form class="profile__form border p-3" action="">
+                    @if (session('success'))
+                        <div class="d-flex justify-content-center mt-3">
+                            <div class="alert alert-success w-50 text-center">
+                                {{ session('success') }}
+                            </div>
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="d-flex justify-content-center mt-3">
+                            <div class="alert alert-danger w-50 text-center">
+                                {{ session('error') }}
+                            </div>
+                        </div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="d-flex justify-content-center mt-3">
+                            <div class="alert alert-danger w-50 text-center">
+                                <ul class="mb-0 list-unstyled">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+                    <form class="profile__form border p-3" action="{{ route('account-details.edit') }}" method="POST">
+                        @csrf
                         <div class="d-flex gap-3 mb-3">
                             <div class="w-100">
                                 <label class="fw-bold mb-2" for="first-name">
@@ -86,7 +112,8 @@
                         </div>
                         <button class="primary-button">تعديل</button>
                     </form>
-                    <form>
+                    <form class="profile__form border p-3" action="{{ route('account-details.update') }}" method="POST">
+                        @csrf
                         <fieldset>
                             <legend class="fw-bolder">تغيير كلمة المرور</legend>
                             <div class="w-100 mb-3">
@@ -94,20 +121,21 @@
                                     كلمة المرور الحالية (اترك الحقل فارغاً إذا كنت لا تودّ
                                     تغييرها)
                                 </label>
-                                <input type="text" class="form__input" id="curr-password" />
+                                <input type="text" class="form__input" id="curr-password" name="old_password" />
                             </div>
                             <div class="w-100 mb-3">
                                 <label class="fw-bold mb-2" for="curr-password">
                                     كلمة المرور الجديدة (اترك الحقل فارغاً إذا كنت لا تودّ
                                     تغييرها)
                                 </label>
-                                <input type="text" class="form__input" id="curr-password" />
+                                <input type="text" class="form__input" id="curr-password" name="new_password" />
                             </div>
                             <div class="w-100 mb-3">
                                 <label class="fw-bold mb-2" for="curr-password">
                                     تأكيد كلمة المرور الجديدة
                                 </label>
-                                <input type="text" class="form__input" id="curr-password" />
+                                <input type="text" class="form__input" id="curr-password"
+                                    name="confirm_new_password" />
                             </div>
                             <button class="primary-button">تغيير كلمة المرور</button>
                         </fieldset>

@@ -30,7 +30,7 @@
                     <div class="profile__user-img rounded-circle overflow-hidden">
                         <img class="w-100" src="assets/images/user.png" alt="">
                     </div>
-                    <div class="profile__user-name">moamenyt</div>
+                    <div class="profile__user-name">{{ Auth::user()->name }}</div>
                 </div>
                 <ul class="profile__tabs list-unstyled ps-3">
                     <li class="profile__tab active">

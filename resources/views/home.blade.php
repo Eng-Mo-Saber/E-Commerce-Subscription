@@ -12,6 +12,7 @@
                 </div>
             </div>
         @endif
+
         <!-- Hero Section Start -->
         <section class="section-container hero">
             <div class="owl-carousel hero__carousel owl-theme">
@@ -38,35 +39,36 @@
                     <div class="products__item">
                         <div class="product__header mb-3 position-relative">
                             @auth
-                            <a href="{{ route('single-product.page' , $product->id) }}">
-                            @endauth
+                                <a href="{{ route('single-product.page', $product->id) }}">
+                                @endauth
                                 <div class="product__img-cont">
                                     <img class="product__img w-100 h-100 object-fit-cover"
                                         src="{{ asset('storage/' . $product->image) }}" data-id="white">
                                 </div>
                             </a>
                             @auth
-                                
-                            {{-- زرار الفيفوريت --}}
-                            <a href="{{ route('Add-favorites.page', $product->id) }}"
-                                class="product__favourite position-absolute top-0 end-0 m-1 rounded-circle d-flex justify-content-center align-items-center bg-white p-2"
-                                title="أضف إلى المفضلة">
-                                @if (in_array($product->id, $favProductIds ?? []))
-                                <i class="fa-solid fa-heart text-danger"></i>
-                                @else
-                                <i class="fa-regular fa-heart text-danger"></i>
-                                @endif
-                            </a>
+
+                                {{-- زرار الفيفوريت --}}
+                                <a href="{{ route('Add-favorites.page', $product->id) }}"
+                                    class="product__favourite position-absolute top-0 end-0 m-1 rounded-circle d-flex justify-content-center align-items-center bg-white p-2"
+                                    title="أضف إلى المفضلة">
+                                    @if (in_array($product->id, $favProductIds ?? []))
+                                        <i class="fa-solid fa-heart text-danger"></i>
+                                    @else
+                                        <i class="fa-regular fa-heart text-danger"></i>
+                                    @endif
+                                </a>
                             @endauth
 
                         </div>
                         @auth
-                            
-                        <div class="product__title text-center">
-                            <a class="text-black text-decoration-none" href="{{ route('single-product.page' , $product->id) }}">
-                                {{ $product->name }}
-                            </a>
-                        </div>
+
+                            <div class="product__title text-center">
+                                <a class="text-black text-decoration-none"
+                                    href="{{ route('single-product.page', $product->id) }}">
+                                    {{ $product->name }}
+                                </a>
+                            </div>
                         @endauth
 
                         <div class="product__author text-center">
@@ -112,33 +114,34 @@
                     <div class="products__item">
                         <div class="product__header mb-3">
                             @auth
-                            <a href="{{ route('single-product.page' , $product->id) }}">
-                            @endauth
+                                <a href="{{ route('single-product.page', $product->id) }}">
+                                @endauth
                                 <div class="product__img-cont">
                                     <img class="product__img w-100 h-100 object-fit-cover"
                                         src="{{ asset('storage/' . $product->image) }}" data-id="white">
                                 </div>
                             </a>
                             @auth
-                                
-                            {{-- زرار الفيفوريت --}}
-                            <a href="{{ route('Add-favorites.page', $product->id) }}"
-                                class="product__favourite position-absolute top-0 end-0 m-1 rounded-circle d-flex justify-content-center align-items-center bg-white p-2"
-                                title="أضف إلى المفضلة">
-                                @if (in_array($product->id, $favProductIds ?? []))
-                                <i class="fa-solid fa-heart text-danger"></i>
-                                @else
-                                    <i class="fa-regular fa-heart text-danger"></i>
+
+                                {{-- زرار الفيفوريت --}}
+                                <a href="{{ route('Add-favorites.page', $product->id) }}"
+                                    class="product__favourite position-absolute top-0 end-0 m-1 rounded-circle d-flex justify-content-center align-items-center bg-white p-2"
+                                    title="أضف إلى المفضلة">
+                                    @if (in_array($product->id, $favProductIds ?? []))
+                                        <i class="fa-solid fa-heart text-danger"></i>
+                                    @else
+                                        <i class="fa-regular fa-heart text-danger"></i>
                                     @endif
                                 </a>
                             @endauth
                         </div>
                         @auth
-                        <div class="product__title text-center">
-                            <a class="text-black text-decoration-none" href="{{ route('single-product.page' , $product->id) }}">
-                                {{ $product->name }}
-                            </a>
-                        </div>
+                            <div class="product__title text-center">
+                                <a class="text-black text-decoration-none"
+                                    href="{{ route('single-product.page', $product->id) }}">
+                                    {{ $product->name }}
+                                </a>
+                            </div>
                         @endauth
                         <div class="product__author text-center">
                             {{ $product->author }}

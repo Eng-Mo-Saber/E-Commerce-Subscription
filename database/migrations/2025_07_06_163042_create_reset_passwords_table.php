@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('reset_passwords', function (Blueprint $table) {
             $table->id();
-            $table->string('type_payment');
+            $table->string('email');
+            $table->string('token');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('reset_passwords');
     }
 };
