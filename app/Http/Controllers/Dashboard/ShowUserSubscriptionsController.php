@@ -12,7 +12,6 @@ class ShowUserSubscriptionsController extends Controller
     public function index()
     {
         $userSubscriptions = UserSubscription::all();
-        $payments = Payment::all();
-        return view('dashboard.subscription.showUserSubscription' , compact('userSubscriptions' , 'payments'));
+        return view('dashboard.subscription.showUserSubscription' , compact('userSubscriptions'));
     }
 }

@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers\Api\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AddUserController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,18 +19,7 @@ class AddUserController extends Controller
     public function index()
     {
         $users = User::all();
-        return view('dashboard.user.showUsers', compact('users'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('dashboard.user.addAdmin');
-
+        return response()->json(UserResource::collection($users), 200);
     }
 
     /**
@@ -39,6 +30,7 @@ class AddUserController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -57,7 +49,7 @@ class AddUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('dashboard.addAdmin')->with('success', 'Add User Successfully');
+        return response()->json(['user' => $user], 201);
     }
 
     /**
@@ -67,18 +59,6 @@ class AddUserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        $user = User::find($id);
-        return view('dashboard.user.updateAdmin' , compact('user'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
     {
         //
     }
@@ -92,22 +72,15 @@ class AddUserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $user = User::findOrFail($id);
 
-    $user = User::findOrFail($id);
+        $request->validate([
+            'role' => 'required|in:admin,customer',
+        ]);
 
-    $request->validate([
-        'role' => 'required|in:admin,customer',
-    ]);
-
-    $user->role = $request->role;
-
-    if ($user->isDirty('role')) {
-        $user->save(); 
-        return redirect()->route('dashboard.showUsers')->with('success', 'updated role successfully');
-    }
-
-    return redirect()->route('dashboard.showUsers')->with('error', 'You did not make any changes');
-        
+        $user->role = $request->role;
+        $user->save();
+        return response()->json(['success' => 'updated role successfully']);
     }
 
     /**
@@ -118,13 +91,16 @@ class AddUserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id);
-        if($user->role == 'admin') {
-            return redirect()->route('dashboard.showUsers')->with('error', 'You can not delete admin');
+        try {
+            $user = User::find($id);
+            if ($user->role == 'admin') {
+                return response()->json(['error' => 'You can not delete admin']);
+            }
+            $user->delete();
+            return response()->json(['success' => 'Delete User successfully']);
+        }catch (Exception $e) {
+            return response()->json(['error' => 'User not found'], 404);
         }
-        $user->delete();
-        return redirect()->route('dashboard.showUsers')->with('success', 'Delete User Successfully');
     }
-
-
+    
 }

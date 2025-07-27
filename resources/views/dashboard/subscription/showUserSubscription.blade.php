@@ -32,7 +32,6 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Auto Renew</th>
-                        <th>Payment Data</th>
                         <th>Payment invoice</th>
                     </tr>
                 </thead>
@@ -51,19 +50,6 @@
                                 @else
                                     Disable
                                 @endif
-                            </td>
-                            <td>
-                                <div class="d-flex flex-row gap-3">
-                                    @foreach ($payments as $payment)
-                                        @if ($payment->id == $userSubscription->payment_id)
-
-
-                                                <div>{{ $payment->type_payment }}</div>
-                                        @endif
-                                    @endforeach
-
-
-                                </div>
                             </td>
                             <td>
                                 <a href="{{ route('dashboard.showPaymentInvoice', $userSubscription->id) }}"

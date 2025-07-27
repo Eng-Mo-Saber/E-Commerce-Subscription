@@ -15,8 +15,8 @@ class AddCategoryController extends Controller
      */
     public function index()
     {
-        $Categories = Category::all();
-        return view('dashboard.category.showCategories', compact('Categories'));
+        $categories = Category::all();
+        return view('dashboard.category.showCategories', compact('categories'));
 
     }
 
@@ -42,7 +42,7 @@ class AddCategoryController extends Controller
         $request->validate([
             'name'=>"required|string|max:255",
         ]);
-        $Category = Category::create([
+        $category = Category::create([
             'name'=>$request->name,
         ]);
         return redirect()->route('dashboard.addCategory')->with('success', 'Add Category Successfully');
@@ -98,8 +98,8 @@ class AddCategoryController extends Controller
      */
     public function destroy($id)
     {
-        $Category = Category::find($id);
-        $Category->delete();
+        $category = Category::find($id);
+        $category->delete();
         return redirect()->route('dashboard.showCategories')->with('success', 'Delete Category Successfully');
     }
 }

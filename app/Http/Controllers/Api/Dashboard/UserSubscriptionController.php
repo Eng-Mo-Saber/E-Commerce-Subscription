@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Api\Dashboard;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\UserSubscriptionResource;
+use App\Models\Payment;
+use App\Models\UserSubscription;
+use Illuminate\Http\Request;
+
+class UserSubscriptionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $userSubscriptions = UserSubscription::all();
+        return response()->json(UserSubscriptionResource::collection($userSubscriptions));
+    }
+    
+    /**
+     * Store a newly created resource in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function store(Request $request)
+    {
+        //
+    }
+    
+    /**
+     * Display the specified resource.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
+    public function show($id)
+    {
+        $userSubscription = UserSubscription::findOrFail($id);
+        $payment = Payment::findOrFail($userSubscription->payment_id);
+        return response()->json(['userSubscriptions'=>new UserSubscriptionResource($userSubscription) , 'paymentId'=>$payment->id]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

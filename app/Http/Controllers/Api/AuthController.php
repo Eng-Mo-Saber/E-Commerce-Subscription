@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Events\UserRegisterEvent;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+class AuthController extends Controller
+{
+    public function register(Request $request)
+    {
+        // validation
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'role' => 'customer',
+            'password' => Hash::make($request->password),
+        ]);
+
+        //event Welcome Mail
+        event(new UserRegisterEvent($user));
+        Auth::login($user);
+        $token = $user->createToken('auth_token')->plainTextToken;
+        return response()->json(['token'=>$token , 'user'=>$user]);
+    }
+    
+    public function login(Request $request)
+    {
+        // validation
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
+            if ($user->role == 'admin') {
+                return response()->json(['token'=>$token , 'user'=>$user , 'massage'=>'Role is Admin Go to Dashboard']);
+                
+            }
+            return response()->json(['token'=>$token , 'user'=>$user , 'massage'=>'Role is Customer Go to Home']);
+        } else {
+            return response()->json(['error'=>'البريد الالكتروني او كلمة المرور غير صحيحة'] , 401);
+        }
+    }
+    
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['massage'=>'LogOut From Web']);
+
+
+    }
+}

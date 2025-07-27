@@ -15,10 +15,6 @@
 
         <div class="row mb-3">
             <div class="col-md-6"><strong>Payment ID:</strong> #  {{ $payment->id }}</div>
-            <div class="col-md-6"><strong>Payment Method:</strong> {{ $payment->type_payment }}</div>
-        </div>
-
-        <div class="row mb-3">
             @if ($userSubscription->auto_renew == 1)
             <div class="col-md-6"><strong>Auto Renew:</strong> Yes </div>
             @else
@@ -27,7 +23,7 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-md-6"><strong>Start Date:</strong> {{ $userSubscription->created_at }}</div>
+            <div class="col-md-6"><strong>Start Date:</strong> {{ $userSubscription->created_at->format('Y-m-d') }}</div>
             <div class="col-md-6"><strong>End Date:</strong> {{ $userSubscription->end_date }} </div>
         </div>
 
