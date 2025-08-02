@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\web;
+namespace App\Http\Controllers\Api\Web\Cart;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Web\CartResource;
 use App\Models\Cart;
-use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-
     public function index()
     {
 
         $carts = Cart::with('product')->where('user_id', auth()->id())->get();
-        return view('cart', compact('carts' ));
+        return response()->json(['products'=>CartResource::collection($carts)] , 200);
     }
     public function store(Request $request, $id)
     {
@@ -30,7 +29,7 @@ class CartController extends Controller
                 $cart->quantity += $request->quantity;
                 $cart->save();
                 $check_addCart = false;
-                return redirect()->route('home.page')->with('success', 'تم اضافة المنتج بنجاح');
+                return response()->json(['massage'=>'تم اضافة المنتج بنجاح']);
             }
         }
         if ($check_addCart) {
@@ -41,15 +40,14 @@ class CartController extends Controller
                 'price' => $product->price,
             ]);
         }
-
-
-        return redirect()->route('home.page')->with('success', 'تم اضافة المنتج الي السلة بنجاح');
+        
+        return response()->json(['massage'=>'تم اضافة المنتج الي السلة بنجاح']);
     }
-
+    
     public function destroy($id)
     {
         $cart = Cart::findOrFail($id);
         $cart->delete();
-        return redirect()->route('cart.page')->with('success', 'تم حذف المنتج من السلة بنجاح');
+        return response()->json(['massage'=>'تم حذف المنتج من السلة بنجاح']);
     }
 }

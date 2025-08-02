@@ -74,7 +74,7 @@ Route::get('/register', [registerController::class, 'index'])->name('register.pa
 //عرض صفحه اللي بيبعت منها الايميل
 Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('forgot-password.page');
 //بيشوف هل الايميل موجود ولا لا 
-Route::post('/check-email-password', [ForgotPasswordController::class, 'check_email'])->name('check-email.forgot-password');
+Route::post('/check-email-password', [ForgotPasswordController::class, 'send_email'])->name('check-email.forgot-password');
 //بيشوف لو التوكين صح بيوديه علي صفحه اعادة التعيين
 Route::get('/reset-password/{token}/{email}', [ResetPasswordController::class, 'index'])->name('reset-password.page');
 //هيعمل اعادة تعيين لكلمة السر
@@ -101,8 +101,8 @@ Route::middleware('auth')->group(function () {
         
     
     Route::get('/account-details', [AccountDetailsController::class, 'index'])->name('account-details.page');
-    Route::post('/edit-account-details', [AccountDetailsController::class, 'edit'])->name('account-details.edit');
-    Route::post('/update-password-account', [AccountDetailsController::class, 'update'])->name('account-details.update');
+    Route::post('/edit-account-details', [AccountDetailsController::class, 'editData'])->name('account-details.edit');
+    Route::post('/update-password-account', [AccountDetailsController::class, 'updatePassword'])->name('account-details.update');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.page');
     //service
     route::get('/service', [ServiceController::class, 'index'])->name('service.page');
@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/single-product/{id}', [SingleProductController::class, 'index'])->name('single-product.page');
     //favorites
     Route::get('/favorites', [FavoritesController::class, 'index'])->name('favorites.page');
-    Route::get('/Add-favorite/{id}', [FavoritesController::class, 'Add_favorite'])->name('Add-favorites.page');
+    Route::get('/favorites/toggle/{id}', [FavoritesController::class, 'Add_favorite'])->name('Add-favorites.page');
     Route::delete('/Remove-favorite/{id}', [FavoritesController::class, 'destroy'])->name('Remove-favorites.page');
     //cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.page');

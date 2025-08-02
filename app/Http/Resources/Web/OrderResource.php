@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Web;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserSubscriptionResource extends JsonResource
+class OrderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,9 @@ class UserSubscriptionResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'user_name'=>$this->user->name,
-            'subscription_name'=>$this->subscription->name,
+            'Create'=>$this->created_at->format('Y-m-d'),
             'status'=>$this->status,
-            'start_date'=>$this->created_at->format('Y-m-d'),
-            'price'=>$this->subscription->price,
-            'end_date'=>$this->end_date,
-            'auto_renew'=>$this->auto_renew,
+            'totalPrice'=>$this->total_price,
         ];
     }
 }

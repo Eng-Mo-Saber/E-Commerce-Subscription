@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Web\ResetPassword;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ResetPasswordMail;
@@ -13,11 +13,6 @@ use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
-    public function index()
-    {
-        return view('auth.forgot-password');
-    }
-
     public function send_email(Request $request)
     {
         $email = $request->email;
@@ -26,7 +21,7 @@ class ForgotPasswordController extends Controller
         ]);
         $find_email = User::where('email', $email)->get()->toArray();
         if (!$find_email) {
-            return back()->with('error', 'Email Not Found');
+            return response()->json(['error'=>'Email Not Found']);
         } else {
             $token = Str::random(64);
             ResetPassword::updateOrCreate(
@@ -34,7 +29,7 @@ class ForgotPasswordController extends Controller
                 ['token' => Hash::make($token)]
             );
             Mail::to($email)->send(new ResetPasswordMail($token , $email));
-            return back()->with('success', 'Email sent successfully');
+            return response()->json([ 'email'=>$email , 'token'=>$token , 'success'=>'Email sent successfully' ]);
         }
     }
 }

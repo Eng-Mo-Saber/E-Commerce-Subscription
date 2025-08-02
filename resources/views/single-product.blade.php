@@ -57,14 +57,14 @@
                     </div>
                     <div class="card-body text-center"> {{-- text-center لوسط الأزرار --}}
                         @if (isset($product->book_file) && $product->book_file)
-                            @if ($typeSubDownload == 'download' && $userSubsDownloadStatus == 'active')
+                            @if ($typeSubDownload == 'download')
                                 <a href="{{ asset('storage/' . $product->book_file) }}" class="btn btn-primary btn-sm me-2"
                                     download> {{-- btn-sm لأزرار أصغر --}}
                                     <i class="fas fa-file-pdf"></i> تحميل PDF
                                 </a>
                             @endif
 
-                            @if ($typeSubReading == 'reading' && $userSubsReadingStatus == 'active')
+                            @if ($typeSubReading == 'reading')
                                 <a href="{{ asset('storage/Products-book-file/' . $product->book_file) }}"
                                     class="btn btn-outline-secondary btn-sm" target="_blank">
                                     <i class="fas fa-book-reader"></i> قراءة عبر المتصفح
@@ -77,7 +77,7 @@
                 </div>
 
                 {{-- قسم تشغيل الكتاب الصوتي --}}
-                @if ($typeSubAudio == 'audio' && $userSubsAudioStatus == 'active')
+                @if ($typeSubAudio == 'audio' )
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">الاستماع إلى الكتاب الصوتي</h5>

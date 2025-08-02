@@ -17,7 +17,7 @@ class AccountDetailsController extends Controller
         return view('auth.account-details' , compact( 'user'));
     }
 
-    public function edit(Request $request){
+    public function editData(Request $request){
         $request->validate([
             'name'=>'required|max:50|string',
             'email'=>'required|email',
@@ -35,7 +35,7 @@ class AccountDetailsController extends Controller
         return back()->with('success' , 'Details Update Successfully');
     }
 
-    public function update(Request $request){
+    public function updatePassword(Request $request){
         $request->validate([
             'old_password'=>'required|min:8|string',
             'new_password'=>'required|min:8|string',

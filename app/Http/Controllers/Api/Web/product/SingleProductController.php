@@ -1,17 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\web;
+namespace App\Http\Controllers\Api\Web\product;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Payment;
-
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\Web\ProductsHomeResource;
 use App\Models\Product;
-use App\Models\Service;
-use App\Models\Subscription;
 use App\Models\UserSubscription;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class SingleProductController extends Controller
@@ -19,9 +15,6 @@ class SingleProductController extends Controller
     public function index($id)
     {
         $product = Product::find($id);
-
-
-
         $userId = Auth::id();
 
         // كل الاشتراكات اللي المستخدم مشترك فيها مع الاشتراك المرتبط
@@ -41,15 +34,12 @@ class SingleProductController extends Controller
                 $typeSubDownload = $userSubscription['subscription']['type'];
             }
         }
+        return response()->json([
+            'product' => new ProductsHomeResource($product),
+            'typeSubDownload' => $typeSubDownload,
+            'typeSubAudio' => $typeSubAudio,
+            'typeSubReading' => $typeSubReading
+        ], 200);
 
-         return view(
-            'single-product',
-            compact(
-                'product',
-                'typeSubDownload',
-                'typeSubAudio',
-                'typeSubReading',
-            )
-        );
     }
 }

@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\web;
+namespace App\Http\Controllers\Api\Web\Subscription;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Payment;
+use App\Http\Resources\UserSubscriptionResource;
 use App\Models\UserSubscription;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 
 class MySubscriptionController extends Controller
 {
@@ -18,13 +15,14 @@ class MySubscriptionController extends Controller
         $userId = Auth::id();
         // كل الاشتراكات اللي المستخدم مشترك فيها مع الاشتراك المرتبط
         $userSubscriptions = UserSubscription::with('subscription')->where('user_id', $userId)->get();
-        return view('subscription.mySubscriptions', compact( 'userSubscriptions'));
+        return response()->json(UserSubscriptionResource::collection($userSubscriptions));
     }
     public function destroy($id)
     {
         $mySub = UserSubscription::find($id);
         $mySub->status ='not_active';
         $mySub->save();
-        return redirect()->route('home.page')->with('success' , 'Your subscription has been successfully cancelled');
+        return response()->json(['mySubscription'=>new UserSubscriptionResource($mySub), 'massage'=>'Your subscription has been successfully cancelled']);
+
     }
 }

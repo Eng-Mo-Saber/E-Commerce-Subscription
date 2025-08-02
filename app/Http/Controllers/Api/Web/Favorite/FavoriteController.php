@@ -1,19 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\web;
+namespace App\Http\Controllers\Api\Web\Favorite;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\Web\FavoritesResource;
 use App\Models\Favorite;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-class FavoritesController extends Controller
+class FavoriteController extends Controller
 {
+
     public function index()
     {
         $favorites = auth()->user()->favorites;
-        return view('favorites', compact('favorites'));
+        return response()->json(['favoriteProducts' => FavoritesResource::collection($favorites)], 200);
     }
     public function add_favorite($id)
     {
@@ -30,21 +32,21 @@ class FavoritesController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            return redirect()->back()->with('success', 'تمت إضافة المنتج إلى المفضلة');
+            return response()->json(['massage' => 'Add Favorites Successfully']);
         } else {
-            // لو عايز تمسح لو موجود
+
             Favorite::where('product_id', $id)
                 ->where('user_id', auth()->id())
                 ->delete();
 
-            return redirect()->back()->with('success', 'تم إزالة المنتج من المفضلة');
+            return response()->json(['massage' => 'The Product Already Exists']);
         }
     }
-
+    
     public function destroy($id)
     {
         $favorite = Favorite::findOrFail($id);
         $favorite->delete();
-        return redirect()->route('favorites.page')->with('success', 'Delete Favorite Successfully');
+        return response()->json(['massage' => 'Delete Favorite Successfully']);
     }
 }
