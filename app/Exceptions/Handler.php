@@ -2,12 +2,15 @@
 
 namespace App\Exceptions;
 
+
+use App\Traits\ApiResponseTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponseTrait;
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -41,9 +44,7 @@ public function render($request, Throwable $exception)
     if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
         $model = class_basename($exception->getModel());
 
-        return response()->json([
-            'error' => "ٌRecord $model not found"
-        ], 404);
+        return $this->response_error("ٌRecord $model not found" , 404);
     }
 
     return parent::render($request, $exception);

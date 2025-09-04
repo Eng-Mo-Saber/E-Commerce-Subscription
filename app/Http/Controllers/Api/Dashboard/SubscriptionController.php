@@ -7,10 +7,12 @@ use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SubscriptionResource;
 use App\Models\Service;
 use App\Models\Subscription;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      *
@@ -19,24 +21,24 @@ class SubscriptionController extends Controller
     public function index()
     {
         $subscriptions = Subscription::all();
-        return response()->json(SubscriptionResource::collection($subscriptions));
+        return $this->response_success(['Subscriptions'=>SubscriptionResource::collection($subscriptions)] );
     }
-
+    
     public function showServicesInSub()
     {
         $services = Service::all();
-        return response()->json(ServiceResource::collection($services));
+        return $this->response_success(['Services'=>ServiceResource::collection($services)]);
     }
-
+    
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
     public function store(Request $request)
     {
-
+        
         $request->validate([
             'name' => "required|string|max:100",
             'description' => "required|string|max:255",
@@ -44,8 +46,8 @@ class SubscriptionController extends Controller
             'price' => "required|integer",
             'duration_in_days' => "required|integer",
         ]);
-
-
+        
+        
         $subscription = Subscription::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -54,27 +56,24 @@ class SubscriptionController extends Controller
             'duration_in_days' => $request->duration_in_days,
             'service_id' => Service::where('name', $request->type)->value('id'),
         ]);
-
-        return response()->json(['subscription' => new SubscriptionResource($subscription), 'success' => 'Add Subscription Successfully']);
+        
+        return $this->response_success(['Subscription'=> new SubscriptionResource($subscription)] , 'Add Subscription Successfully');
     }
-
+    
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
     public function show($id)
     {
         if ($id == 1 || $id == 2 || $id == 3 || $id == 4 || $id == 5 || $id == 6 || $id == 7 || $id == 8 || $id == 9) {
-            return response()->json(['error' => 'Can\'t Update This Subscription']);
+            return $this->response_error('Can\'t Update This Subscription');
         }
         $subscription = Subscription::find($id);
         $services = Service::all();
-        return response()->json([
-            'subscription' => new SubscriptionResource($subscription),
-            'services' => ServiceResource::collection($services)
-        ]);
+        return $this->response_success(['Subscription'=> new SubscriptionResource($subscription) , 'Services' => ServiceResource::collection($services) ]);
     }
     
     /**
@@ -104,7 +103,7 @@ class SubscriptionController extends Controller
         $subscription->service_id = Service::where('name', $request->type)->value('id');
         $subscription->save();
         
-        return response()->json(['subscription' => new SubscriptionResource($subscription), 'success' => 'Update Subscription Successfully']);
+        return $this->response_success(['Subscription'=> new SubscriptionResource($subscription)] , 'Update Subscription Successfully');
     }
     
     /**
@@ -116,10 +115,10 @@ class SubscriptionController extends Controller
     public function destroy($id)
     {
         if ($id == 1 || $id == 2 || $id == 3 || $id == 4 || $id == 5 || $id == 6 || $id == 7 || $id == 8 || $id == 9) {
-            return response()->json(['error' => 'Can\'t Delete This Subscription']);
+            return $this->response_error('Can\'t Delete This Subscription');
         }
         $subscription = Subscription::findOrFail($id);
         $subscription->delete();
-        return response()->json(['success' => 'Delete Subscription Successfully']);
+        return $this->response_success( null ,'Delete Subscription Successfully');
     }
 }

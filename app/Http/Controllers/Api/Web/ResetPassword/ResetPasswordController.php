@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Mail\SuccessResetPasswordMail;
 use App\Models\ResetPassword;
 use App\Models\User;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class ResetPasswordController extends Controller
 {
+    use ApiResponseTrait ;
     public function index($token, $email)
     {
         $reset_password = ResetPassword::where('email', $email)->first();
@@ -24,7 +26,7 @@ class ResetPasswordController extends Controller
         if (!Hash::check($token, $reset_password->token)) {
             return abort(403, 'The link is invalid or expired');
         }
-        return response()->json(['email' => $email, 'massage' => 'Go End Point ResetPassword Page'], 200);
+        return $this->response_success(['email' => $email] , 'Go End Point ResetPassword Page');
     }
 
     public function reset_password(Request $request)
@@ -38,7 +40,7 @@ class ResetPasswordController extends Controller
         if ($request->password == $request->confirm_password) {
             $user = User::where('email', $email)->first();
             if (!$user) {
-                return response()->json(['error' => 'User not found.'], 404);
+                return $this->response_error('User not found.', 404);
             }
             $user->password = Hash::make($request->password);
             $user->save();
@@ -46,7 +48,7 @@ class ResetPasswordController extends Controller
             $reset = ResetPassword::where('email', $email)->first();
             $reset->delete();
             Mail::to($email)->send(new SuccessResetPasswordMail($user));
-            return response()->json(['massage' => 'تم تغيير كلمة المرور بنجاح ‘ قم بتسجيل الدخول الان']);
+            return $this->response_success(null , 'تم تغيير كلمة المرور بنجاح ‘ قم بتسجيل الدخول الان');
         }
     }
 }

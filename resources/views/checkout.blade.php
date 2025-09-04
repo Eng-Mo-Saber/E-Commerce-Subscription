@@ -43,7 +43,24 @@
                         <textarea class="form__input" placeholder="ملاحظات حول الطلب, مثال: ملحوظة خاصة بتسليم الطلب." type="text"
                             id="last-name" name="notes"></textarea>
                     </div>
-                    <button class="primary-button w-100 py-2">تاكيد الطلب</button>
+
+                    <!-- وسيلة الدفع -->
+                    <div class="mb-3">
+                        <h2>طريقة الدفع</h2>
+
+                        <div>
+                            <input type="radio" id="pay_online" name="payment_method" value="online" required>
+                            <label for="pay_online">الدفع أونلاين</label>
+                        </div>
+
+                        <div>
+                            <input type="radio" id="pay_on_delivery" name="payment_method" value="cod">
+                            <label for="pay_on_delivery">الدفع عند الاستلام</label>
+                        </div>
+                    </div>
+
+                    <!-- زر التأكيد -->
+                    <button class="primary-button w-100 py-2">تأكيد الطلب</button>
                 </form>
             </div>
             <div class="checkout__order-details-cont w-50 px-3">

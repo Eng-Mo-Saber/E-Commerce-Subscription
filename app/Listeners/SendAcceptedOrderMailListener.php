@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events;
 use App\Events\AcceptedOrderEvent;
 use App\Mail\AcceptedOrderMail;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -3,10 +3,12 @@
 namespace App\Console;
 
 use App\Events\RenewSubscriptionEvent;
+use App\Jobs\AcceptedOrderJob;
 use App\Jobs\SendMailBeforeEndSubscriptionJop;
 use App\Jobs\SendMailComplatedOrderJop;
 use App\Jobs\SendMailEndSubscriptionJop;
 use App\Jobs\SendMailRenewSubscriptionJop;
+use App\Jobs\UnAcceptedOrderJob;
 use App\Mail\BeforeEndSubscriptionMail;
 use App\Mail\CompletedOrderMail;
 use App\Mail\EndSubscriptionMail;

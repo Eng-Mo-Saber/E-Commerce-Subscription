@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\UserRegisterEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    use ApiResponseTrait;
     public function register(Request $request)
     {
         // validation
@@ -35,7 +38,7 @@ class AuthController extends Controller
         event(new UserRegisterEvent($user));
         Auth::login($user);
         $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(['token'=>$token , 'user'=>$user]);
+        return $this->response_success(['token'=>$token , 'user'=>new UserResource($user)] , "Register User Success");
     }
     
     public function login(Request $request)
@@ -49,18 +52,18 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
             if ($user->role == 'admin') {
-                return response()->json(['token'=>$token , 'user'=>$user , 'massage'=>'Role is Admin Go to Dashboard']);
+                return $this->response_success(['token'=>$token , 'user'=>new UserResource($user)] , "Login Admin Success , Go to Dashboard");
                 
             }
-            return response()->json(['token'=>$token , 'user'=>$user , 'massage'=>'Role is Customer Go to Home']);
+            return $this->response_success(['token'=>$token , 'user'=>new UserResource($user)] , "Login Customer Success , Go to Home");
         } else {
-            return response()->json(['error'=>'البريد الالكتروني او كلمة المرور غير صحيحة'] , 401);
+            return $this->response_error(['البريد الالكتروني او كلمة المرور غير صحيحة'] , 401);
         }
     }
     
     public function logout(Request $request){
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['massage'=>'LogOut From Web']);
+        return $this->response_success(null , "LogOut From Web");
 
 
     }

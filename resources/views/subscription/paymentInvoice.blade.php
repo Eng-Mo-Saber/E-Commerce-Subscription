@@ -15,11 +15,6 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-md-6"><strong>Payment ID:</strong> #  {{ $payment->id }}</div>
-            <div class="col-md-6"><strong>Payment Method:</strong> {{ $payment->type_payment }}</div>
-        </div>
-
-        <div class="row mb-3">
             @if ($userSubscription->auto_renew == 1)
             <div class="col-md-6"><strong>Auto Renew:</strong> Yes </div>
             @else

@@ -7,11 +7,13 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      *
@@ -20,15 +22,15 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return response()->json(ProductResource::collection($products));
+        return $this->response_success(['Products' => ProductResource::collection($products)]);
     }
-
+    
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
     public function store(Request $request)
     {
         
@@ -46,10 +48,10 @@ class ProductController extends Controller
         ]);
         if ($request->hasFile('book_file')) {
             $file = $request->file('book_file');
-
+            
             // حفظ الملف في storage/app/public/Products-book-file باسم تلقائي
             $path = $file->store('public/Products-book-file');
-
+            
             // نخزن الاسم في الداتابيز بعد إزالة 'public/' عشان نستخدمه مع asset()
             $book_file_path = str_replace('public/Products-book-file/', '', $path);
         }
@@ -67,8 +69,8 @@ class ProductController extends Controller
             'audio_file' => $audio_path,
             'book_file' => $book_file_path,
         ]);
-
-        return response()->json($product);
+        
+        return $this->response_success(['Product' => new ProductResource($product)] , "Add Product Successfully");
     }
     
     /**
@@ -81,12 +83,12 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $categories = Category::all();
-        return response()->json(['category'=>CategoryResource::collection($categories) , 'product'=>$product]);
+        return $this->response_success(['categories'=>CategoryResource::collection($categories) ,'Product' => new ProductResource($product)]);
     }
     public function showCategories()
     {
         $categories = Category::all();
-        return response()->json(CategoryResource::collection($categories));
+        return $this->response_success(['categories'=>CategoryResource::collection($categories)]);
     }
     
     /**
@@ -144,9 +146,9 @@ class ProductController extends Controller
         }
         
         $product->save();
-        return response()->json(['product'=>$product , 'massage'=>'Product updated successfully']);
-
-
+        return $this->response_success(['Product' => new ProductResource($product)] , "Update Product Successfully");
+        
+        
     }
 
     /**
@@ -154,7 +156,7 @@ class ProductController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-     */
+    */
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
@@ -162,17 +164,17 @@ class ProductController extends Controller
         if ($product->image) {
             Storage::delete('public/' . $product->image);
         }
-
+        
         // حذف الصوت لو موجود
         if ($product->audio_file) {
             Storage::delete('public/' . $product->audio_file);
         }
-
+        
         // حذف ملف الكتاب PDF لو موجود
         if ($product->book_file) {
             Storage::delete('public/Products-book-file/' . $product->book_file);
         }
         $product->delete();
-        return response()->json(['success'=>'Product deleted successfully']);
+        return $this->response_success(null , "Delete Product Successfully");
     }
 }

@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +21,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return response()->json(UserResource::collection($users), 200);
+        return $this->response_success(['Users' => UserResource::collection($users)]);
     }
 
     /**
@@ -49,7 +51,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['user' => $user], 201);
+        return $this->response_success(['User' => new UserResource($user)], "Add User Successfully");
     }
 
     /**
@@ -80,7 +82,7 @@ class UserController extends Controller
 
         $user->role = $request->role;
         $user->save();
-        return response()->json(['success' => 'updated role successfully']);
+        return $this->response_success(['User' => new UserResource($user)], "updated role successfully");
     }
 
     /**
@@ -91,16 +93,11 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $user = User::find($id);
-            if ($user->role == 'admin') {
-                return response()->json(['error' => 'You can not delete admin']);
-            }
-            $user->delete();
-            return response()->json(['success' => 'Delete User successfully']);
-        }catch (Exception $e) {
-            return response()->json(['error' => 'User not found'], 404);
+        $user = User::findOrFail($id);
+        if ($user->role == 'admin') {
+            return $this->response_error("You can not delete admin");
         }
+        $user->delete();
+        return $this->response_success(null, "Delete User successfully");
     }
-    
 }

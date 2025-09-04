@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\Web\Order\OrderWebController;
 use App\Http\Controllers\Api\Web\Order\TrackOrderController;
 use App\Http\Controllers\Api\Web\Payment\PaymentController;
 use App\Http\Controllers\Api\Web\Payment\PaymentInvoiceController;
+use App\Http\Controllers\Api\Web\Payment\PaymentSubscriptionController;
 use App\Http\Controllers\Api\Web\product\SingleProductController;
 use App\Http\Controllers\Api\Web\ResetPassword\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\ResetPassword\ResetPasswordController;
@@ -29,6 +30,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -73,7 +75,9 @@ Route::post('/login',[AuthController::class , 'login']);
 Route::post('/check-email-password', [ForgotPasswordController::class, 'send_email']);
 Route::get('/reset-password/{token}/{email}', [ResetPasswordController::class, 'index']);
 Route::post('/reset', [ResetPasswordController::class, 'reset_password']);
-
+//payment
+Route::get('/payment/handle', [PaymentSubscriptionController::class, 'handlePayment']);
+Route::get('/payment-order/handle', [OrderWebController::class, 'handleOrderPayment']);
 
 
 // --------------------------------------------------------------------------
@@ -88,6 +92,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/my-subscription', [MySubscriptionController::class, 'index']);
     Route::delete('/cancel-my-subscription/{id}', [MySubscriptionController::class, 'destroy']);
     Route::get('/paymentInvoice/{id}', [PaymentInvoiceController::class, 'show']);
+    //payment subscription
+    Route::get('/payment/{id}', [PaymentSubscriptionController::class, 'index']);
+    Route::post('/payment-kashier', [PaymentSubscriptionController::class, 'redirectToKashier']);
+    Route::get('/payment-invoice/{id}', [PaymentSubscriptionController::class, 'show']);
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::get('/favorites/toggle/{id}', [FavoriteController::class, 'add_favorite']);
     Route::delete('/remove-favorite/{id}', [FavoriteController::class, 'destroy']);

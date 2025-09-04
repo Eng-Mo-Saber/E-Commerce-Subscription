@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserSubscriptionResource;
 use App\Models\Payment;
 use App\Models\UserSubscription;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class UserSubscriptionController extends Controller
 {
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +20,7 @@ class UserSubscriptionController extends Controller
     public function index()
     {
         $userSubscriptions = UserSubscription::all();
-        return response()->json(UserSubscriptionResource::collection($userSubscriptions));
+        return $this->response_success(['UserSubscriptions'=>UserSubscriptionResource::collection($userSubscriptions)]);
     }
     
     /**
@@ -42,7 +44,7 @@ class UserSubscriptionController extends Controller
     {
         $userSubscription = UserSubscription::findOrFail($id);
         $payment = Payment::findOrFail($userSubscription->payment_id);
-        return response()->json(['userSubscriptions'=>new UserSubscriptionResource($userSubscription) , 'paymentId'=>$payment->id]);
+        return $this->response_success(['UserSubscriptions'=>new UserSubscriptionResource($userSubscription) , 'PaymentId'=>$payment->id]);
     }
 
     /**

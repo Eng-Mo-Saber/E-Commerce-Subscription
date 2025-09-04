@@ -17,11 +17,12 @@ class HomeController extends Controller
     public function index()
     {
         $products = Product::all();
+        $products_new = Product::latest()->take(10)->get();
         if (auth()->user()) {
             $favProductIds = auth()->user()->favorites->pluck('product_id')->toArray();
-            return view('home', compact('products', 'favProductIds'));
+            return view('home', compact('products', 'favProductIds' ,'products_new'));
         }
-        return view('home', compact('products'));
+        return view('home', compact('products' , 'products_new'));
     }
 
 }

@@ -3,18 +3,22 @@
 namespace App\Http\Controllers\Api\Web\Cart;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\Web\CartResource;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    use ApiResponseTrait;
+
     public function index()
     {
 
         $carts = Cart::with('product')->where('user_id', auth()->id())->get();
-        return response()->json(['products'=>CartResource::collection($carts)] , 200);
+        return $this->response_success(['Products'=>CartResource::collection($carts)]);
     }
     public function store(Request $request, $id)
     {
@@ -29,7 +33,7 @@ class CartController extends Controller
                 $cart->quantity += $request->quantity;
                 $cart->save();
                 $check_addCart = false;
-                return response()->json(['massage'=>'تم اضافة المنتج بنجاح']);
+                return $this->response_success(['Product'=>New ProductResource($product)],'تم اضافة المنتج بنجاح' );
             }
         }
         if ($check_addCart) {
@@ -40,14 +44,13 @@ class CartController extends Controller
                 'price' => $product->price,
             ]);
         }
-        
-        return response()->json(['massage'=>'تم اضافة المنتج الي السلة بنجاح']);
+        return $this->response_success(['Product'=>New ProductResource($product)], 'تم اضافة المنتج الي السلة بنجاح' );
     }
     
     public function destroy($id)
     {
         $cart = Cart::findOrFail($id);
         $cart->delete();
-        return response()->json(['massage'=>'تم حذف المنتج من السلة بنجاح']);
+        return $this->response_success(null , 'تم حذف المنتج من السلة بنجاح' );
     }
 }

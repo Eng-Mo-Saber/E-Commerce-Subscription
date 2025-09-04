@@ -19,6 +19,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Orders\OrderDetailsController;
 use App\Http\Controllers\Orders\OrderRecievedController;
 use App\Http\Controllers\Orders\OrdersController;
+use App\Http\Controllers\Orders\PaymentOrderController;
 use App\Http\Controllers\Orders\TrackOrderController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\web\AboutController;
@@ -26,12 +27,13 @@ use App\Http\Controllers\web\BranchesController;
 use App\Http\Controllers\web\CartController;
 use App\Http\Controllers\web\CheckoutController;
 use App\Http\Controllers\web\ContactController;
+
 use App\Http\Controllers\web\FavoritesController;
 use App\Http\Controllers\web\HomeController;
 
 use App\Http\Controllers\web\MySubscriptionController;
 use App\Http\Controllers\web\PaymentController;
-
+use App\Http\Controllers\web\PaymentPageController;
 use App\Http\Controllers\web\PrivacyPolicyController;
 use App\Http\Controllers\web\ReadController;
 use App\Http\Controllers\web\ServiceController;
@@ -46,6 +48,10 @@ use Illuminate\Support\Facades\Route;
 use Laravel\SerializableClosure\Serializers\Signed;
 use PgSql\Lob;
 use PhpParser\Node\Stmt\For_;
+
+
+
+
 
 
 
@@ -94,6 +100,7 @@ Route::post('/login-user', [LoginController::class, 'login'])->name('login.user'
 // Route::get('/refund-policy', [PagesController::class, 'refund_policy'])->name('refund-policy.page');
 
 Route::get('/payment/handle', [PaymentController::class, 'handlePayment'])->name('payment.handle');
+Route::get('/payment/handle-order', [OrdersController::class, 'handleOrderPayment'])->name('payment.order.handle');
 
 
 
@@ -138,11 +145,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/add-orders', [OrdersController::class, 'store'])->name('orders.store');
     //حذف الاوردر
     Route::get('/delete-orders/{id}', [OrdersController::class, 'destroy'])->name('orders.destroy');
-
+    
     //عرض تفاصيل الاوردر للمستخدم
     Route::get('/order-details/{id}', [OrderDetailsController::class, 'index'])->name('order-details.page');
     Route::get('/track-order', [TrackOrderController::class, 'index'])->name('track-order.page');
     Route::post('/track-status-order', [TrackOrderController::class, 'show_status_order'])->name('track-status-order');
+    Route::get('/payment-success', [PaymentPageController::class, 'ShowPageSuccess'])->name('payment-success');
+    Route::get('/payment-failed', [PaymentPageController::class, 'ShowPageFailed'])->name('payment-failed');
+
 });
 
 

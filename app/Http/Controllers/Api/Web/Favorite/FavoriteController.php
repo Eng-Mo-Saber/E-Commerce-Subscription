@@ -7,39 +7,40 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\Web\FavoritesResource;
 use App\Models\Favorite;
 use App\Models\Product;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
+    use ApiResponseTrait;
 
     public function index()
     {
         $favorites = auth()->user()->favorites;
-        return response()->json(['favoriteProducts' => FavoritesResource::collection($favorites)], 200);
+        return $this->response_success(['FavoriteProducts' => FavoritesResource::collection($favorites)]);
     }
     public function add_favorite($id)
     {
 
         $product = Product::findOrFail($id);
-
+        
         $exists = Favorite::where('product_id', $id)
-            ->where('user_id', auth()->id())
+        ->where('user_id', auth()->id())
             ->exists();
 
-        if (!$exists) {
+            if (!$exists) {
             Favorite::create([
                 'product_id' => $id,
                 'user_id' => auth()->id(),
             ]);
-
-            return response()->json(['massage' => 'Add Favorites Successfully']);
+            
+            return $this->response_success(null , 'Add Favorites Successfully' );
         } else {
-
+            
             Favorite::where('product_id', $id)
-                ->where('user_id', auth()->id())
-                ->delete();
-
-            return response()->json(['massage' => 'The Product Already Exists']);
+            ->where('user_id', auth()->id())
+            ->delete();
+            return $this->response_success(null , 'The Product Already Exists' );
         }
     }
     
@@ -47,6 +48,6 @@ class FavoriteController extends Controller
     {
         $favorite = Favorite::findOrFail($id);
         $favorite->delete();
-        return response()->json(['massage' => 'Delete Favorite Successfully']);
+        return $this->response_success(null , 'Delete Favorite Successfully');
     }
 }

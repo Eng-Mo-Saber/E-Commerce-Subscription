@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\web;
+namespace App\Http\Controllers\Api\Web\Payment;
 
 use App\Events\UserSubscriptionEvent;
 use App\Http\Controllers\Controller;
-use App\Mail\SendSubscriptionMail;
-use App\Mail\SubscriptionMail;
-use App\Models\Category;
+use App\Http\Resources\SubscriptionResource;
+use App\Http\Resources\UserSubscriptionResource;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\UserSubscription;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
-class PaymentController extends Controller
+class PaymentSubscriptionController extends Controller
 {
-
+    use ApiResponseTrait ;
     public function index($id)
     {
         $subscription = Subscription::findOrFail($id);
-        return view('subscription.payment', compact('subscription'));
+        return $this->response_success(['subscription' => new SubscriptionResource($subscription)]);
     }
+
     function redirectToKashier(Request $request)
     {
-        session(['auto_renew' => $request->auto_renew, 'subscription_id' => $request->subscription_id]);
 
         $subscription = Subscription::findOrFail($request->subscription_id);
         $user = auth()->user();
@@ -34,8 +33,9 @@ class PaymentController extends Controller
         $amount = $subscription->price; // 
         $currency = "EGP";
         $mode = "test"; // أو "live" حسب الحالة
-
-        $successRedirect = route('payment.handle');
+        $user_sub_renew = $user->id . '_' . $request->subscription_id . '_' . $request->auto_renew;
+        $successRedirect = url('/api/payment/handle'
+            . '?user_sub_renew=' . $user_sub_renew);
         // === بناء الـ path للتوقيع ===
         $path = "/?payment={$merchantId}.{$orderId}.{$amount}.{$currency}";
         $hash = hash_hmac('sha256', $path, $secret, false);
@@ -55,18 +55,24 @@ class PaymentController extends Controller
             "&interactionSource=Ecommerce" .
             "&enable3DS=true";
 
-        return redirect()->away($paymentURL);
+        return $this->response_success(['url_Payment' => $paymentURL, 'subscription_id' => $request->subscription_id, 'auto_renew' => $request->auto_renew]);
     }
-    public function handlePayment()
+    public function handlePayment(Request $request)
     {
-        if ($_GET['paymentStatus'] == 'SUCCESS') {
-            $auto_renew = session('auto_renew');
-            $subscription_id = session('subscription_id');
+
+        $user_sub_renew = $request->query('user_sub_renew');
+        $parts = explode("_", $user_sub_renew);
+        $user_id = $parts[0];
+        $subscription_id = $parts[1];
+        $auto_renew = $parts[2];
+        $paymentStatus = $request->query('paymentStatus');
+        $signatureUrl = $request->query('signature');
+        if ($paymentStatus == 'SUCCESS') {
             $queryString = '';
             $secret = 'acaa262a-a929-439a-9582-b8e60c1bf30d';
 
-            foreach ($_GET as $key => $value) {
-                if ($key === 'signature' || $key === 'mode') {
+            foreach ($request->query() as $key => $value) {
+                if ($key === 'signature' || $key === 'mode' || $key === 'user_sub_renew') {
                     continue;
                 }
                 $queryString .= '&' . $key . '=' . $value;
@@ -74,19 +80,19 @@ class PaymentController extends Controller
 
             $queryString = ltrim($queryString, '&');
             $signature = hash_hmac('sha256', $queryString, $secret, false);
-
-            if ($signature === $_GET['signature']) {
+            if ($signature === $signatureUrl) {
                 // تعريف المتغيرات
-                $order_id = $_GET['merchantOrderId'];
-                $amount = $_GET['amount'];
-                $currency = $_GET['currency'];
-                $status = $_GET['paymentStatus'];
-                $payment_method = $_GET['cardBrand'] ?? 'card';
-                $transaction_id = $_GET['transactionId'] ?? null;
+                $order_id = $request->query('merchantOrderId');
+                $amount = $request->query('amount');
+                $currency = $request->query('currency');
+                $status = $paymentStatus;
+                $payment_method = $request->query('cardBrand') ?? 'card';
+                $transaction_id = $request->query('transactionId') ?? null;
                 $payment_date = now();
+
                 // إنشاء الدفع
                 $payment = Payment::create([
-                    'user_id' => auth()->id(),
+                    'user_id' => $user_id,
                     'subscription_id' => $subscription_id,
                     'order_id' => $order_id,
                     'amount' => $amount,
@@ -99,7 +105,7 @@ class PaymentController extends Controller
 
                 $subscription = Subscription::findOrFail($subscription_id);
                 $user_subscription = UserSubscription::create([
-                    'user_id' => auth()->user()->id,
+                    'user_id' => $user_id,
                     'subscription_id' => $subscription_id,
                     'status' => 'active',
                     'end_date' => now()->addDays($subscription->duration_in_days),
@@ -108,20 +114,18 @@ class PaymentController extends Controller
                 ]);
                 $user_subscription_id = $user_subscription->id;
                 event(new UserSubscriptionEvent($user_subscription_id));
-                return redirect()->route('home.page')->with('success', 'Payment Success');
+                return $this->response_success(null , 'Payment Success');
             } else {
-                return redirect()->route('home.page')->with('error', 'Payment UnSuccess');
+                return $this->response_error('Payment UnSuccess');
             }
-        }else{
-
-            return redirect()->route('home.page')->with('error', 'Payment UnSuccess');
+        } else {
+            return $this->response_error('Payment UnSuccess');
         }
     }
-
+    
     public function show($id)
     {
-        $userSubscription = UserSubscription::find($id);
-        $payment = Payment::find($userSubscription->payment_id);
-        return view('subscription.paymentInvoice', compact('userSubscription',  'payment'));
+        $userSubscription = UserSubscription::findOrFail($id);
+        return $this->response_success(['userSubscription' => new UserSubscriptionResource($userSubscription )]);
     }
 }

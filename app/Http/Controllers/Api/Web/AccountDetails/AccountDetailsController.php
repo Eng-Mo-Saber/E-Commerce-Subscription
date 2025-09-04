@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Api\Web\AccountDetails;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Web\AccountDetailsResource;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AccountDetailsController extends Controller
 {
+    use ApiResponseTrait;
     public function index()
     {
         $user = auth()->user();
-        return response()->json(['user'=>new AccountDetailsResource($user)]);
+        return $this->response_success(['User'=>new AccountDetailsResource($user)]);
     }
     
     public function editData(Request $request)
@@ -32,7 +34,7 @@ class AccountDetailsController extends Controller
         $user->address = $request->address;
         $user->save();
         
-        return response()->json(['user'=>new AccountDetailsResource($user) , 'success'=>'Details Update Successfully']);
+        return $this->response_success(['User'=>new AccountDetailsResource($user)],'Details Update Successfully');
     }
     
     public function updatePassword(Request $request)
@@ -51,7 +53,7 @@ class AccountDetailsController extends Controller
         } else {
             $user->password = Hash::make($request->new_password);
             $user->save();
-            return response()->json(['success'=>'Password changed successfully']);
+            return $this->response_success(null,'Password changed successfully');
         }
     }
 }

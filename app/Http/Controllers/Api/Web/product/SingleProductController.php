@@ -7,11 +7,13 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\Web\ProductsHomeResource;
 use App\Models\Product;
 use App\Models\UserSubscription;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SingleProductController extends Controller
 {
+    use ApiResponseTrait ;
     public function index($id)
     {
         $product = Product::find($id);
@@ -34,7 +36,7 @@ class SingleProductController extends Controller
                 $typeSubDownload = $userSubscription['subscription']['type'];
             }
         }
-        return response()->json([
+        return $this->response_success([
             'product' => new ProductsHomeResource($product),
             'typeSubDownload' => $typeSubDownload,
             'typeSubAudio' => $typeSubAudio,
