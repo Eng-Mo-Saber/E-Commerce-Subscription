@@ -20,10 +20,6 @@ class ProductsHomeResource extends JsonResource
             "description"=>$this->description ,
             "image"=>$this->image ,
             "price"=>$this->price ,
-            "author"=>$this->author ,
-            "quantity"=>$this->stock_quantity ,
-            "publisher_year"=>$this->publisher_year ,
-            "category"=>$this->category->name,
         ];
     }
 }

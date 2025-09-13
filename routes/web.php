@@ -26,16 +26,17 @@ use App\Http\Controllers\web\AboutController;
 use App\Http\Controllers\web\BranchesController;
 use App\Http\Controllers\web\CartController;
 use App\Http\Controllers\web\CheckoutController;
+
 use App\Http\Controllers\web\ContactController;
-
 use App\Http\Controllers\web\FavoritesController;
-use App\Http\Controllers\web\HomeController;
 
+use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\MySubscriptionController;
 use App\Http\Controllers\web\PaymentController;
 use App\Http\Controllers\web\PaymentPageController;
 use App\Http\Controllers\web\PrivacyPolicyController;
 use App\Http\Controllers\web\ReadController;
+use App\Http\Controllers\web\SearchController;
 use App\Http\Controllers\web\ServiceController;
 use App\Http\Controllers\web\ShopController;
 use App\Http\Controllers\Web\SingleCategoryController;
@@ -48,6 +49,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\SerializableClosure\Serializers\Signed;
 use PgSql\Lob;
 use PhpParser\Node\Stmt\For_;
+
+
 
 
 
@@ -104,6 +107,8 @@ Route::get('/payment/handle-order', [OrdersController::class, 'handleOrderPaymen
 
 
 
+
+
 Route::middleware('auth')->group(function () {
         
     
@@ -152,7 +157,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/track-status-order', [TrackOrderController::class, 'show_status_order'])->name('track-status-order');
     Route::get('/payment-success', [PaymentPageController::class, 'ShowPageSuccess'])->name('payment-success');
     Route::get('/payment-failed', [PaymentPageController::class, 'ShowPageFailed'])->name('payment-failed');
-
+    
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
 });
 
 

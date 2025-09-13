@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Web\Payment\PaymentSubscriptionController;
 use App\Http\Controllers\Api\Web\product\SingleProductController;
 use App\Http\Controllers\Api\Web\ResetPassword\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\ResetPassword\ResetPasswordController;
+use App\Http\Controllers\Api\Web\Search\SearchController;
 use App\Http\Controllers\Api\Web\Service\ServiceWebController;
 use App\Http\Controllers\Api\Web\Subscription\MySubscriptionController;
 use App\Http\Controllers\Api\Web\Subscription\SubscriptionWebController;
@@ -30,6 +31,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -107,6 +109,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource("/orders",OrderWebController::class);
     Route::post('/track-status-order',[TrackOrderController::class , 'show_status_order']);
     Route::post('/logout',[AuthController::class , 'logout']);
+    Route::get('/search', [SearchController::class, 'index']);
+
     
 });
 

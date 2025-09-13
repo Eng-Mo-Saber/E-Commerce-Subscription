@@ -11,12 +11,14 @@
                       <img class="h-100" src="{{ asset('assets/images/logo.png') }}" alt="">
                   </a>
               </div>
-              <div class="nav__search w-100">
-                  <input class="nav__search-input w-100" type="search" placeholder="أبحث هنا عن اي شئ تريده...">
-                  <span class="nav__search-icon">
+              <form action="{{ route('search') }}" method="GET" class="nav__search w-100">
+                  <input class="nav__search-input w-100" type="search" name="q"
+                      placeholder="أبحث هنا عن اي شئ تريده..." required>
+                  <button type="submit" class="nav__search-icon" style="background:none; border:none; cursor:pointer;">
                       <i class="fa-solid fa-magnifying-glass"></i>
-                  </span>
-              </div>
+                  </button>
+              </form>
+
 
               <ul class="nav__links gap-3 list-unstyled d-none d-lg-flex m-0">
                   @auth

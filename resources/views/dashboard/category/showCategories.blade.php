@@ -16,6 +16,13 @@
                     </div>
                 </div>
             @endif
+            @if (session('error'))
+                <div class="d-flex justify-content-center mt-3">
+                    <div class="alert alert-danger w-50 text-center">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            @endif
             <table class="table table-hover text-nowrap">
                 <thead>
                     <tr>

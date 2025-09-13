@@ -77,7 +77,7 @@
                         @endauth
 
                         <div class="product__author text-center">
-                            {{ $product_new->author }}
+                            {{ Str::limit($product_new->description, 100, '...') }}
                         </div>
 
                         <div class="product__price text-center d-flex gap-2 justify-content-center flex-wrap">

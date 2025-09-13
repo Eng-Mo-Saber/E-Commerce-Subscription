@@ -17,7 +17,6 @@ class AddCategoryController extends Controller
     {
         $categories = Category::all();
         return view('dashboard.category.showCategories', compact('categories'));
-
     }
 
     /**
@@ -28,7 +27,6 @@ class AddCategoryController extends Controller
     public function create()
     {
         return view('dashboard.category.addCategory');
-
     }
 
     /**
@@ -40,10 +38,10 @@ class AddCategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>"required|string|max:255",
+            'name' => "required|string|max:255",
         ]);
         $category = Category::create([
-            'name'=>$request->name,
+            'name' => $request->name,
         ]);
         return redirect()->route('dashboard.addCategory')->with('success', 'Add Category Successfully');
     }
@@ -56,8 +54,11 @@ class AddCategoryController extends Controller
      */
     public function show($id)
     {
+        if ($id == 1 || $id == 2) {
+            return redirect()->route('dashboard.showCategories')->with('error', 'Can\'t Update This Category');
+        }
         $category = Category::find($id);
-        return view('dashboard.category.updateCategory' , compact('category'));
+        return view('dashboard.category.updateCategory', compact('category'));
     }
 
     /**
@@ -82,10 +83,10 @@ class AddCategoryController extends Controller
     {
         $Category = Category::find($id);
         $request->validate([
-            'name'=>"required|string|max:255",
+            'name' => "required|string|max:255",
         ]);
         $Category->update([
-            'name'=>$request->name,
+            'name' => $request->name,
         ]);
         return redirect()->route('dashboard.showCategories')->with('success', 'Update Category Successfully');
     }
@@ -98,6 +99,9 @@ class AddCategoryController extends Controller
      */
     public function destroy($id)
     {
+        if ($id == 1 || $id == 2) {
+            return redirect()->route('dashboard.showCategories')->with('error', 'Can\'t Delete This Category');
+        }
         $category = Category::find($id);
         $category->delete();
         return redirect()->route('dashboard.showCategories')->with('success', 'Delete Category Successfully');
