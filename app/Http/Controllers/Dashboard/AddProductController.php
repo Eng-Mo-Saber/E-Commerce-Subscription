@@ -60,9 +60,15 @@ class AddProductController extends Controller
 
             // نخزن الاسم في الداتابيز بعد إزالة 'public/' عشان نستخدمه مع asset()
             $book_file_path = str_replace('public/Products-book-file/', '', $path);
+        }else{
+            $book_file_path = null;
+        }
+        if($request->hasFile('audio_file')){
+            $audio_path = Storage::disk('public')->put('Products-audio', $request->file('audio_file'));
+        }else{
+            $audio_path = null;
         }
         $image_path = Storage::disk('public')->put('Products-image', $request->file('image'));
-        $audio_path = Storage::disk('public')->put('Products-audio', $request->file('audio_file'));
         $product = Product::create([
             'name' => $request->name,
             'description' => $request->description,
