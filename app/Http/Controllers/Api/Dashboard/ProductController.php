@@ -162,17 +162,18 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         // حذف الصورة لو موجودة
         if ($product->image) {
-            Storage::delete('public/' . $product->image);
+
+            Storage::disk('public')->delete($product->image);
         }
-        
+
         // حذف الصوت لو موجود
         if ($product->audio_file) {
-            Storage::delete('public/' . $product->audio_file);
+            Storage::disk('public')->delete($product->audio_file);
         }
-        
+
         // حذف ملف الكتاب PDF لو موجود
         if ($product->book_file) {
-            Storage::delete('public/Products-book-file/' . $product->book_file);
+            Storage::disk('public')->delete($product->book_file);
         }
         $product->delete();
         return $this->response_success(null , "Delete Product Successfully");

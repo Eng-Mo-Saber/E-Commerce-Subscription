@@ -18,6 +18,7 @@ class AddProductController extends Controller
     public function index()
     {
         $products = Product::all();
+
         return view('dashboard.product.showProducts', compact('products'));
     }
 
@@ -29,28 +30,28 @@ class AddProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('dashboard.product.addProduct', compact('categories',));
+
+        return view('dashboard.product.addProduct', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $request->validate([
-            'name' => "required|string|max:50",
-            'description' => "required|string|max:255",
-            'price' => "required|integer",
-            'author' => "required|string|max:100",
-            'stock_quantity' => "required|integer",
-            'publisher_year' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
-            'category_id' => "required|integer|exists:categories,id",
-            'image' => "required|image|mimes:jpeg,png,jpg,gif,svg",
-            'audio_file' => "nullable|file|mimes:mp3",
-            'book_file' => "nullable|file|mimes:pdf",
+            'name' => 'required|string|max:50',
+            'description' => 'required|string|max:255',
+            'price' => 'required|integer',
+            'author' => 'required|string|max:100',
+            'stock_quantity' => 'required|integer',
+            'publisher_year' => 'required|digits:4|integer|min:1900|max:'.date('Y'),
+            'category_id' => 'required|integer|exists:categories,id',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'audio_file' => 'nullable|file|mimes:mp3',
+            'book_file' => 'nullable|file|mimes:pdf',
         ]);
         if ($request->hasFile('book_file')) {
             $file = $request->file('book_file');
@@ -60,12 +61,12 @@ class AddProductController extends Controller
 
             // نخزن الاسم في الداتابيز بعد إزالة 'public/' عشان نستخدمه مع asset()
             $book_file_path = str_replace('public/Products-book-file/', '', $path);
-        }else{
+        } else {
             $book_file_path = null;
         }
-        if($request->hasFile('audio_file')){
+        if ($request->hasFile('audio_file')) {
             $audio_path = Storage::disk('public')->put('Products-audio', $request->file('audio_file'));
-        }else{
+        } else {
             $audio_path = null;
         }
         $image_path = Storage::disk('public')->put('Products-image', $request->file('image'));
@@ -95,6 +96,7 @@ class AddProductController extends Controller
     {
         $product = Product::find($id);
         $categories = Category::all();
+
         return view('dashboard.product.updateProduct', compact('product', 'categories'));
     }
 
@@ -112,30 +114,29 @@ class AddProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => "required|string|max:50",
-            'description' => "required|string|max:255",
-            'price' => "required|integer",
-            'author' => "required|string|max:100",
-            'stock_quantity' => "required|integer",
-            'publisher_year' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
-            'category_id' => "required|integer|exists:categories,id",
-            'image' => "nullable|image|mimes:jpeg,png,jpg,gif,svg",
-            'audio_file' => "nullable|file|mimes:mp3",
-            'book_file' => "nullable|file|mimes:pdf",
+            'name' => 'required|string|max:50',
+            'description' => 'required|string|max:255',
+            'price' => 'required|integer',
+            'author' => 'required|string|max:100',
+            'stock_quantity' => 'required|integer',
+            'publisher_year' => 'required|digits:4|integer|min:1900|max:'.date('Y'),
+            'category_id' => 'required|integer|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'audio_file' => 'nullable|file|mimes:mp3',
+            'book_file' => 'nullable|file|mimes:pdf',
         ]);
 
         $product = Product::findOrFail($id);
 
         $image_path = $product->image;
         $audio_path = $product->audio_file;
-        $book_file_path =  $product->book_file;
+        $book_file_path = $product->book_file;
         // تحديث بناءً على اللي المستخدم بعت بس
         $product->name = $request->name;
         $product->description = $request->description;
@@ -152,7 +153,7 @@ class AddProductController extends Controller
 
         // لو فيه رفع صوت جديد
         if ($request->hasFile('audio_file')) {
-            $audioPath =  Storage::disk('public')->put('Products-audio', $request->file('audio_file'));
+            $audioPath = Storage::disk('public')->put('Products-audio', $request->file('audio_file'));
             $product->audio_file = $audioPath;
         }
 
@@ -178,17 +179,18 @@ class AddProductController extends Controller
         $product = Product::findOrFail($id);
         // حذف الصورة لو موجودة
         if ($product->image) {
-            Storage::delete('public/' . $product->image);
+
+            Storage::disk('public')->delete($product->image);
         }
 
         // حذف الصوت لو موجود
         if ($product->audio_file) {
-            Storage::delete('public/' . $product->audio_file);
+            Storage::disk('public')->delete($product->audio_file);
         }
 
         // حذف ملف الكتاب PDF لو موجود
         if ($product->book_file) {
-            Storage::delete('public/Products-book-file/' . $product->book_file);
+            Storage::disk('public')->delete($product->book_file);
         }
         $product->delete();
 
