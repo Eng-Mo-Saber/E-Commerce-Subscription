@@ -46,17 +46,42 @@ class ProductController extends Controller
             'audio_file' => "nullable|file|mimes:mp3",
             'book_file' => "nullable|file|mimes:pdf",
         ]);
+        $image_path = $request->file('image')->hashName(); // اسم تلقائي
+        $request->file('image')->storeAs('Products-image', $image_path, 'public');
+
+
+        // حفظ ملف الكتاب
         if ($request->hasFile('book_file')) {
             $file = $request->file('book_file');
-            
-            // حفظ الملف في storage/app/public/Products-book-file باسم تلقائي
-            $path = $file->store('public/Products-book-file');
-            
-            // نخزن الاسم في الداتابيز بعد إزالة 'public/' عشان نستخدمه مع asset()
-            $book_file_path = str_replace('public/Products-book-file/', '', $path);
+
+            // اسم الملف التلقائي اللي Laravel بيولده
+            $bookFileName = $file->hashName();
+
+            // حفظ الملف في storage/app/public/Products-book-file
+            $file->storeAs('Products-book-file', $bookFileName, 'public');
+
+            // نخزن الاسم فقط في الداتابيز
+            $book_file_path = $bookFileName;
+        } else {
+            $book_file_path = null;
         }
-        $image_path = Storage::disk('public')->put('Products-image', $request->file('image'));
-        $audio_path = Storage::disk('public')->put('Products-audio', $request->file('audio_file'));
+
+        // حفظ ملف الصوت
+        if ($request->hasFile('audio_file')) {
+            $file = $request->file('audio_file');
+
+            // اسم الملف التلقائي
+            $audioFileName = $file->hashName();
+
+            // حفظ الملف في storage/app/public/Products-audio
+            $file->storeAs('Products-audio', $audioFileName, 'public');
+
+            // نخزن الاسم فقط في الداتابيز
+            $audio_path = $audioFileName;
+        } else {
+            $audio_path = null;
+        }
+
         $product = Product::create([
             'name' => $request->name,
             'description' => $request->description,
